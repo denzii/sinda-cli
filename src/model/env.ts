@@ -19,20 +19,20 @@ export enum ShellType  {
 
 export enum HostPlatform {
     Wsl =  "Wsl",
-    Windows = "Windows", 
+    Windows = "Windows",
     Unix= "Unix"
-} 
+}
 
 export default class Env {
     public static PSFuncPath: () => string = () => {
-        return path.resolve(Env.getDirname(), "../../src/script/index.ps1");
+        return path.resolve(Env.getDirname(), "../../src/script/index.ps1").replace("\\C:", "");
     }
     public static HostConfigPath: () => string = () => {
-        if (Env.isWindows()) return  "C:\\ProgramData\\sindagal\\" 
+        if (Env.isWindows()) return  "C:\\ProgramData\\sindagal\\"
         if (Env.isWsl()) return  "/mnt/c/ProgramData/sindagal/"
         return process.env.HOME + "/.local/share/";
     }
-    
+
     public static Meta : () => EnvMeta =
     () => {
 
@@ -46,16 +46,16 @@ export default class Env {
         else availablePlatforms.push(HostPlatform.Unix);
 
         // rework this if will be needed in the future, currently unused &  wont work with "."
-        const configCommand = isWindows 
+        const configCommand = isWindows
         ? new Executable(ShellType.Powershell, ".", [powershellFunctionsPath, "Get-EnvState"])
         : new Executable(ShellType.Bash, "echo", ["hi"]); //unimplemented, this should point to the bash equivalent of "Get-EnvState"
 
         return {hostConfigPath, stateCommand: configCommand, hostPlatforms: availablePlatforms};
-    } 
- 
+    }
+
     private static isWsl : () =>boolean = () => os.release().includes("WSL");
     private static isWindows : () =>boolean = () => os.platform() == "win32";
-    private static getDirname: () => string = 
+    private static getDirname: () => string =
 	() => {
 		return  path.dirname(import.meta.url.replace("file:///", "/"));
 	}

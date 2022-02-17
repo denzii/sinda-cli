@@ -32,9 +32,9 @@ Valid Options
 	--render=web
 	--render=webserver
 	--render=none
-	
+
 Examples
-$ sindagal  
+$ sindagal
 $ sindagal --render=web  Run and threat this as a browser application
 & sindagal --render=webserver  Run and threat this as a serverside rendered application
 `;
@@ -57,10 +57,13 @@ import chalk from "chalk";
 dotenv.config();
 const {hostConfigPath, stateCommand, hostPlatforms} = Env.Meta();
 process.HostPlatforms = hostPlatforms;
+
+/**@TODO refactor survey logic to display questions only for the given platform */
+if (!hostPlatforms.includes(HostPlatform.Windows)) throw new Error("This is Windows only for now.");
+
 // const execResponses: ShellResponse[] = Shell.Run([stateCommand]);
 // const envMetaResponse = execResponses[0];
 // if(!envMetaResponse.std.stdout){
-//windows only 
 // const envState = JSON.parse(String(envMetaResponse.std.stdout)) as IEnvState;
 
 const UserInterface: (props: {context: CommandLineApp}) => JSX.Element = App
@@ -70,7 +73,7 @@ const ui: JSX.Element = UserInterface({context: cli});
 
 
 
-if (cluster.isPrimary){ 
+if (cluster.isPrimary){
 	CommandLineApp.RenderUI(ui, cli);
 }
 

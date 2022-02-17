@@ -58,7 +58,7 @@ export default class Data {
 			},
 			{
 				name:Question.None,
-				context:{ 
+				context:{
 					annotation: {text: "Please press proceed to confirm.", colourization: "teen",  },
 					heading:  {text:"Are you happy with your choices?", colourization: "cristal", },
 					mutuallyExclusive: false,
@@ -81,9 +81,9 @@ export default class Data {
 				// 		cmdKey: "Enable-WindowsTerminal",
 				// 		availability: [HostPlatform.Windows,  HostPlatform.Wsl],
 
-				// 	}, 
-				// 	text: "Get Windows Terminal (Installs Windows Terminal Preview build)", 
-					  
+				// 	},
+				// 	text: "Get Windows Terminal (Installs Windows Terminal Preview build)",
+
 				// 	secondaryColourization:"summer"
 				// },
 				// {
@@ -94,9 +94,9 @@ export default class Data {
 
 				// 	},
 				// 	text: "Enable Git tab completion (Installs Posh Git)",
-					 
+
 				// 	secondaryColourization:"summer"
-				// },	
+				// },
 				// {
 				// 	context:{
 				// 		name: Question.Shell, owner:undefined, isButton:false,
@@ -105,18 +105,18 @@ export default class Data {
 
 				// 	},
 				// 	text: "Configure WSL2 Ubuntu (Enables Virtualization & WSL2 Kernel Upgrade)",
-					  
+
 				// 	secondaryColourization:"summer"
 				// },
 				{
 					context:{
 						name: Question.Shell, owner:undefined, isButton:false,
 						cmdKey: "Add-SindaDistro",
-						availability: [HostPlatform.Windows, HostPlatform.Wsl],
+						availability: [HostPlatform.Windows],
 
-					}, 
+					},
 					text: "Configure an Ubuntu instance with ZSH as default shell and OhMyZsh with some common plugins",
-					 
+
 					secondaryColourization:"summer"
 				},
 				// {
@@ -127,7 +127,7 @@ export default class Data {
 
 				// 	},
 				// 	text: "Configure Docker (Installs Docker Desktop)",
-					 
+
 				// 	secondaryColourization:"summer"
 				// },
 				// {
@@ -137,7 +137,7 @@ export default class Data {
 				// 		availability: [HostPlatform.Windows, HostPlatform.Unix],
 				// 	},
 				// 	text: "Configure Podman (Installs Podman) ",
-					 
+
 				// 	secondaryColourization:"summer"
 				// },
 				// {
@@ -145,19 +145,19 @@ export default class Data {
 				// 		name: Question.SDK, owner:undefined, isButton:false,
 				// 		cmdKey: "Add-SindaModule",
 				// 		availability: [HostPlatform.Windows, HostPlatform.Wsl],
-				// 	}, 
-				// 	text: "Install Sindagal Powershell Modules on your Windows", 
-					  
+				// 	},
+				// 	text: "Install Sindagal Powershell Modules on your Windows",
+
 				// 	secondaryColourization:"summer"
-				// },				
+				// },
 				// {
 				// context:{
 				// 		name: Question.Boilerplate, owner:undefined, isButton:false,
 				// 		cmdKey: "Get-GitPortfolio",
 				// 		availability: [HostPlatform.Windows, HostPlatform.Unix, HostPlatform.Wsl],
 				// 	},
-				// 	text: "Download the NextJS Portfolio Template", 
-					  
+				// 	text: "Download the NextJS Portfolio Template",
+
 				// 	secondaryColourization:"summer"
 				// },
 				// {
@@ -167,19 +167,19 @@ export default class Data {
 				// 		availability: [HostPlatform.Windows, HostPlatform.Unix, HostPlatform.Wsl],
 				// 	},
 				// 	text: "Download the CLI App Template",
-					 
+
 				// 	secondaryColourization:"summer"
 				// },
 				{
-					context:{ 
+					context:{
 						name:Question.None, owner:undefined,isButton:true,
 						cmdKey: undefined,
 						annotation: {text: "Please press proceed to confirm.", colourization: "teen",  },
 						heading:  {text:"Are you happy with your choices?", colourization: "cristal", },
 						mutuallyExclusive: false,
 					},
-					text: "proceed", 
-					secondaryText: "Are you sure? Please press Enter/ESC",  secondaryColourization:"summer", 
+					text: "proceed",
+					secondaryText: "Are you sure? Please press Enter/ESC",  secondaryColourization:"summer",
 				},
 			]
 		});

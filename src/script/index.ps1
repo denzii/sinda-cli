@@ -1,7 +1,7 @@
 function Test-Elevation {
     [OutputType([boolean])]
     $elevated = ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
-    
+
     return $elevated
 }
 
@@ -11,8 +11,8 @@ function Get-EnvState {
     	throw "This requires admin privileges! Please run it through an elevated powershell prompt."
     }
 
-    return @{ 
-        osArchitectureBits= ($env:PROCESSOR_ARCHITECTURE -split '(?=\d)',2)[1]; 
+    return @{
+        osArchitectureBits= ($env:PROCESSOR_ARCHITECTURE -split '(?=\d)',2)[1];
         osArchitecture= ($env:PROCESSOR_ARCHITECTURE -split '(?=\d)',2)[0];
         osBuild= [int]((wmic os get BuildNumber) -split '(?=\d)',2)[3];
         osVersion = [int](Get-ItemProperty "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion").ReleaseId;
@@ -30,33 +30,33 @@ function Get-DistroState {
 		# Temporarily set console output encoding to unicode to read the wsl --list results properly
 		[Console]::OutputEncoding = [Text.Encoding]::Unicode
 
-		# Split by \r*\n to work around the issue of "D  E  B  I  A  N" 
+		# Split by \r*\n to work around the issue of "D  E  B  I  A  N"
         ($cmdOut = wsl --list) > $null
         $wslListOutput =  $cmdOut -split "\r*\n"
-        
+
         $distroState = @{}
         $installedDistros = New-Object System.Collections.ArrayList
 		foreach ($line in $wslListOutput) {
   			$lineIsEmpty = ("" -eq $line) -or ([string]::IsNullOrWhiteSpace($line))
   			$lineIsBullshit = $line -eq "Windows Subsystem for Linux Distributions:"
-			
-			$noInstalledDistrosMessage = "Windows Subsystem for Linux has no installed distributions."		
+
+			$noInstalledDistrosMessage = "Windows Subsystem for Linux has no installed distributions."
 			$noDistroIsPresent = $line -eq $noInstalledDistrosMessage
-			
+
 			if ($noDistroIsPresent) { break }
-  			if ($lineIsEmpty -or $lineIsBullshit) { continue } 
+  			if ($lineIsEmpty -or $lineIsBullshit) { continue }
 
             if ($line -Match "(([a-zA-Z]*) ([(Default)])*)"){
-     			$distroName = ($line -split ' ',2)[0]  
+     			$distroName = ($line -split ' ',2)[0]
 				$distroState.defaultDistro =  ($line -split ' ',2)[0]
   			} else {
                 $installedDistros.Add(($line -split ' ',2)[0]) > $null
   			}
 		}
-        
+
         $distroState.installedDistros = $installedDistros
         # set back to utf8 so the terminal won't get messed up
-		[Console]::OutputEncoding = [Text.Encoding]::UTF8 
+		[Console]::OutputEncoding = [Text.Encoding]::UTF8
 
         return $distroState
 	}
@@ -69,8 +69,8 @@ function Get-AddonState {
     	throw "This requires admin privileges!"
     }
 
-    return @{ 
-        isChocoInstalled= Test-Chocolatey; 
+    return @{
+        isChocoInstalled= Test-Chocolatey;
         isWindowsTerminalInstalled= Test-WindowsTerminal;
         isOhMyPoshInstalled= Test-OhMyPosh;
         isPoshGitInstalled = Test-PoshGit;
@@ -85,22 +85,22 @@ function Test-WindowsTerminal {
 
     $windowsTerminalCommandOutput = [string](Get-Command -Name wt.exe -ErrorAction SilentlyContinue)
     $isWindowsTerminalInstalled = !([string]::IsNullOrEmpty($windowsTerminalCommandOutput))
-    
+
     return $isWindowsTerminalInstalled
 }
 
 function Enable-WindowsTerminal {
     if(!(Test-Elevation)){
     	throw "This requires admin privileges, please run it through an elevated powershell prompt"
-     }     
+     }
      if (!(Test-Chocolatey)){
      	# throw "This requires chocolatey, please run Enable-Chocolatey function first"
          Enable-Chocolatey
      }
-     
+
      Write-Host "Installing Microsoft Terminal through Chocolatey" -ForegroundColor White -BackgroundColor Black
-     choco install microsoft-windows-terminal -y --pre 
-    
+     choco install microsoft-windows-terminal -y --pre
+
      #TODO: Move settings backup to a separate function so it can be executed after wsl setup
      #$wtSettingsURL = "https://raw.githubusercontent.com/denzii/sindagal/master/settings.json"
 
@@ -109,7 +109,7 @@ function Enable-WindowsTerminal {
 
     #$windowsTerminalConfigPath = "$env:USERPROFILE\AppData\Local\Packages\Microsoft.WindowsTerminalPreview_8wekyb3d8bbwe\LocalState\settings.json"
     #$windowsTerminalBackupConfigPath = "$env:USERPROFILE\AppData\Local\Packages\Microsoft.WindowsTerminalPreview_8wekyb3d8bbwe\LocalState\settings-backup.json"
-    
+
     #if (!(Test-Path -Path $windowsTerminalBackupConfigPath -PathType Leaf)){
 	#Write-Host "Backing up windows terminal settings" -ForegroundColor White -BackgroundColor Black
         #Rename-Item -LiteralPath $windowsTerminalConfigPath -NewName "settings-backup.json"
@@ -122,16 +122,16 @@ function Enable-WindowsTerminal {
 function Disable-WindowsTerminal {
     if(!(Test-Elevation)){
     	throw "This requires admin privileges, please run it through an elevated powershell prompt"
-     }     
+     }
 
      if (Test-WindowsTerminal) {
      if (!(Test-Chocolatey)) {
      	Enable-Chocolatey
      }
      Write-Host "Removing Microsoft Windows Terminal Executable through Chocolatey" -ForegroundColor White -BackgroundColor Black
-     
+
      choco uninstall microsoft-windows-terminal -y --pre --force
-     
+
      # remove leftover appx package manually (for some reason choco is not reliably removing it)
      $windowsTerminalFullName = (Get-AppxPackage | Where-Object Name -eq "Microsoft.WindowsTerminalPreview").PackageFullName
      Remove-AppxPackage -Package $windowsTerminalFullName
@@ -141,7 +141,7 @@ function Disable-WindowsTerminal {
 function Restore-WindowsTerminal {
     if(!(Test-Elevation)){
     	throw "This requires admin privileges, please run it through an elevated powershell prompt"
-     }     
+     }
     Write-Host "Restoring Microsoft Windows Terminal to its initial state" -ForegroundColor White -BackgroundColor Black
 
     $windowsTerminalConfigPath = "$env:USERPROFILE\AppData\Local\Packages\Microsoft.WindowsTerminalPreview_8wekyb3d8bbwe\LocalState\settings.json"
@@ -161,14 +161,14 @@ function Test-Chocolatey {
     return $isChocoInstalled
 }
 
-function Enable-Chocolatey {    
+function Enable-Chocolatey {
     $InstallDir='C:\ProgramData\chocoportable'
     $env:ChocolateyInstall="$InstallDir"
-        
+
     Set-ExecutionPolicy Bypass -Scope Process -Force;
     Write-Host "Installing Chocolatey using official script @ https://community.chocolatey.org/install.ps1" -ForegroundColor White -BackgroundColor Black
 
-    Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))    
+    Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
 
    if (!(Test-Chocolatey)) {
        Write-Host "For some reason chocolatey was not installed " -ForegroundColor Red -BackgroundColor Black
@@ -182,14 +182,14 @@ function Disable-Chocolatey {
     if(!(Test-Elevation)){
     	throw "This requires admin privileges, please run it through an elevated powershell prompt"
      }
-     
+
     if(Test-Chocolatey){
      Write-Host "Uninstalling Chocolatey" -ForegroundColor White -BackgroundColor Black
      $InstallDir='C:\ProgramData\chocoportable'
-     
+
      Get-ChildItem -Path $InstallDir -Recurse | Remove-Item -force -recurse
-     Remove-Item $InstallDir -Recurse -Force 
-     
+     Remove-Item $InstallDir -Recurse -Force
+
      $env:ChocolateyInstall=$null
     }
 }
@@ -199,25 +199,25 @@ function Disable-Chocolatey {
 function Enable-OhMyPosh {
     if(!(Test-OhMyPosh)){
         Install-Module oh-my-posh -Scope CurrentUser
-        Write-Host(@{changeMade=$true;}| ConvertTo-Json) 
+        Write-Host(@{changeMade=$true;}| ConvertTo-Json)
 
     }
-    Write-Host(@{changeMade=$false;}| ConvertTo-Json) 
+    Write-Host(@{changeMade=$false;}| ConvertTo-Json)
 }
 
 function Test-OhMyPosh {
     [OutputType([boolean])]
 
-    $ohMyPoshCommandOutput = [string](Get-Module -ListAvailable -Name oh-my-posh) 
+    $ohMyPoshCommandOutput = [string](Get-Module -ListAvailable -Name oh-my-posh)
     $isOhMyPoshInstalled =  !([string]::IsNullOrEmpty($ohMyPoshCommandOutput))
-    
+
     return $isOhMyPoshInstalled
 }
 
 # function Enable-OhMyPosh {
 #     if(!(Test-Elevation)){
 #     	throw "This requires admin privileges, please run it through an elevated powershell prompt"
-#      }   
+#      }
 #      Write-Host "Installing Oh my posh powershell module through PowerShellGet" -ForegroundColor White -BackgroundColor Black
 #      ECHO Y | powershell Install-Module oh-my-posh -Force -Scope CurrentUser
 # }
@@ -225,7 +225,7 @@ function Test-OhMyPosh {
 function Disable-OhMyPosh {
     if(Test-OhMyPosh){
     	Write-Host "Removing Oh my posh powershell module through PowerShellGet" -ForegroundColor White -BackgroundColor Black
-    	Get-InstalledModule -Name oh-my-posh | Uninstall-Module 
+    	Get-InstalledModule -Name oh-my-posh | Uninstall-Module
     }
 }
 
@@ -234,7 +234,7 @@ function Disable-OhMyPosh {
 function Test-PoshGit {
     [OutputType([boolean])]
 
-    $poshGitCommandOutput = [string](Get-Module -ListAvailable -Name posh-git) 
+    $poshGitCommandOutput = [string](Get-Module -ListAvailable -Name posh-git)
     $isPoshGitInstalled =  !([string]::IsNullOrEmpty($poshGitCommandOutput))
 
     return $isPoshGitInstalled
@@ -248,10 +248,10 @@ function Enable-PoshGit {
 function Disable-PoshGit {
     if(!(Test-Elevation)){
     	throw "This requires admin privileges, please run it through an elevated powershell prompt"
-     }  
-    if (Test-PoshGit){ 
+     }
+    if (Test-PoshGit){
     	Write-Host "Removing posh git powershell module through PowerShellGet" -ForegroundColor White -BackgroundColor Black
-    	Get-InstalledModule -Name posh-git | Uninstall-Module 
+    	Get-InstalledModule -Name posh-git | Uninstall-Module
     }
 }
 
@@ -259,10 +259,10 @@ function Disable-PoshGit {
 
 function Test-Glyphs{
     # For some reason return type annotation does not work if importing library?
-    [System.Reflection.Assembly]::LoadWithPartialName("System.Drawing") | Out-Null 
+    [System.Reflection.Assembly]::LoadWithPartialName("System.Drawing") | Out-Null
     $fontQueryOutput = ([string]((New-Object System.Drawing.Text.InstalledFontCollection).Families | Where-Object Name -eq "CascadiaCode Nerd Font"))
     $isCascadiaCodeInstalled = (![string]::IsNullOrEmpty($fontQueryOutput))
-    
+
     return $isCascadiaCodeInstalled
 }
 
@@ -270,14 +270,14 @@ function Add-Glyphs {
     if(!(Test-Elevation)){
     	throw "This requires admin privileges, please run it through an elevated powershell prompt"
     }
-    
+
     	$cascadiaCodeURL = "https://github.com/AaronFriel/nerd-fonts/releases/download/v1.2.0/CascadiaCode.Nerd.Font.Complete.ttf"
-    	
+
 	$cascadiaDestinationPath = "C:\ProgramData\Sindagal\cascadia-code"
 	If(!(test-path $cascadiaDestinationPath)){
        	    New-Item -Path $cascadiaDestinationPath -ItemType "directory"
 	}
-	
+
 	Write-Host "Downloading Cascadia Code NF Patch from" -ForegroundColor White -BackgroundColor Black
 	Write-Host "${cascadiaCodeURL}\"  -ForegroundColor White -BackgroundColor Black
 
@@ -300,12 +300,12 @@ function Add-Glyphs {
 function Remove-Glyphs {
     if(!(Test-Elevation)){
     	throw "This requires admin privileges, please run it through an elevated powershell prompt"
-    } 
-    if(Test-Glyphs){  
+    }
+    if(Test-Glyphs){
 	$cascadiaDestinationPath = "C:\ProgramData\Sindagal\cascadia-code"
         Write-Host "Iterating over ${cascadiaDestinationPath} folder contents to delete each font from the Host" -ForegroundColor White -BackgroundColor Black
         $files = Get-ChildItem "${cascadiaDestinationPath}"
-	
+
         foreach ($f in $files){
             $FontFile = [System.IO.FileInfo]$f
             Remove-Font -FontFile $FontFile
@@ -320,21 +320,21 @@ function Remove-Glyphs {
 function Test-WSL2Support {
     [OutputType([boolean], [System.Void])]
 
-    $amdRequiredOsVersion = [int]1903 
-    $amdRequiredOsBuild = [int]18362 
-   
-    $armRequiredOsVersion = [int]2004 
-    $armRequiredOsBuild = [int]19041 
+    $amdRequiredOsVersion = [int]1903
+    $amdRequiredOsBuild = [int]18362
+
+    $armRequiredOsVersion = [int]2004
+    $armRequiredOsBuild = [int]19041
 
     $amdWsl2EligibilityCriteria = $env:SINDAGAL_OS_VER -ge $amdRequiredOsVersion -and $env:SINDAGAL_OS_BUILD -ge $amdRequiredOsBuild
     $armWsl2EligibilityCriteria = $env:SINDAGAL_OS_VER -ge $armRequiredOsVersion -and $env:SINDAGAL_OS_BUILD -ge $armRequiredOsBuild
 
-    $isAmd = $env:SINDAGAL_OS_ARCHITECTURE -eq "AMD" 
-    $isArm = $env:SINDAGAL_OS_ARCHITECTURE -eq "ARM" 
-    $is64Bits = $env:SINDAGAL_OS_BITS -eq "64" 
+    $isAmd = $env:SINDAGAL_OS_ARCHITECTURE -eq "AMD"
+    $isArm = $env:SINDAGAL_OS_ARCHITECTURE -eq "ARM"
+    $is64Bits = $env:SINDAGAL_OS_BITS -eq "64"
 
-    $osIsWsl2Eligible = If($isAmd){ $amdWsl2EligibilityCriteria } ElseIf($isArm){$armWsl2EligibilityCriteria} Else {[bool]$false} 
-    $hostSupportsWsl2 = $is64Bits -and $osIsWsl2Eligible   
+    $osIsWsl2Eligible = If($isAmd){ $amdWsl2EligibilityCriteria } ElseIf($isArm){$armWsl2EligibilityCriteria} Else {[bool]$false}
+    $hostSupportsWsl2 = $is64Bits -and $osIsWsl2Eligible
 
     return $hostSupportsWsl2
 }
@@ -344,8 +344,8 @@ function Test-WSL {
     #$wslCommandOutput = [string](Get-Command -Name wsl.exe -ErrorAction SilentlyContinue)
     #$isWslInstalled = !([string]::IsNullOrEmpty($wslCommandOutput))
     #return $isWslInstalled
-    
-    return (Get-WindowsOptionalFeature -Online -FeatureName Microsoft-Windows-Subsystem-Linux).State -eq "Enabled" 
+
+    return (Get-WindowsOptionalFeature -Online -FeatureName Microsoft-Windows-Subsystem-Linux).State -eq "Enabled"
 }
 
 function Enable-WSL {
@@ -375,22 +375,22 @@ function Enable-WSLLegacy {
     if(!(Test-WSL)){
     	try {
 			Write-Host "Enabling WSL..." -ForegroundColor White -BackgroundColor Black
-      	    ECHO N | powershell Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Windows-Subsystem-Linux -All 
+      	    ECHO N | powershell Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Windows-Subsystem-Linux -All
 
         	if (Test-WSL2Support){
 	    		Write-Host "Host Supports WSL2..." -ForegroundColor White -BackgroundColor Black
 	   			Write-Host "Enabling Virtual Machine Platform..." -ForegroundColor White -BackgroundColor Black
             	ECHO N | powershell Enable-WindowsOptionalFeature -Online -FeatureName VirtualMachinePlatform -All
-                
-                $installFolder = "C:\ProgramData\Sindagal\" 
-                $installFile = "C:\ProgramData\Sindagal\wsl_update_x64.msi"   
+
+                $installFolder = "C:\ProgramData\Sindagal\"
+                $installFile = "C:\ProgramData\Sindagal\wsl_update_x64.msi"
 
 		If(!(test-path $installFolder)){
        	    		New-Item -Path $installFolder -ItemType "directory"
-		} 
+		}
 	    		Write-Host "Downloading WSL2 Kernel Update from official source: https://wslstorestorage.blob.core.windows.net/wslblob/wsl_update_x64.msi" -ForegroundColor White -BackgroundColor Black
-            	Invoke-WebRequest -uri https://wslstorestorage.blob.core.windows.net/wslblob/wsl_update_x64.msi -Method "GET"  -OutFile $installFile 
-            
+            	Invoke-WebRequest -uri https://wslstorestorage.blob.core.windows.net/wslblob/wsl_update_x64.msi -Method "GET"  -OutFile $installFile
+
             	# silent install
 	    		Write-Host "Silently running the WSL2 Kernel Update" -ForegroundColor White -BackgroundColor Black
             	$installerParams = @("/qn", "/i", $installFile);Start-Process "msiexec.exe" -ArgumentList $installerParams -Wait -NoNewWindow
@@ -406,33 +406,46 @@ function Enable-WSLLegacy {
 }
 
 function Add-SindaDistro{
-    wsl.exe --import SindaUbuntu /~ ./sinda-ubuntu.tar
+	$distroState = Get-DistroState
 
-    # try{
-    # } catch{
-    #     Write-Error $_.exception.message
+	if([bool]$distroState["installedDistros"].Contains("SindaUbuntu")){
+		Write-Host "distro already exists, no action taken"
+		return
+	}else {
+		$result = wsl.exe --import SindaUbuntu C:\ProgramData\sindagal C:\ProgramData\sindagal\sinda-ubuntu.tar
+		if($?){
+			Write-Host "WSL Distro had been imported successfully"
+		} else{
+			Write-Error $result
+		}
+	}
 
-    # }
+	$distroState = Get-DistroState
+	if([bool]$distroState["installedDistros"].Contains("SindaUbuntu")){
+		Write-Host "Distros updated without errors..."
+	} else{
+		Write-Error "Arbitrary error occured, distros remain unchanged"
+	}
 }
 
 function Disable-WSL {
     if(!(Test-Elevation)){
     	throw "This requires admin privileges, please run it through an elevated powershell prompt"
-    }   
+    }
     if(Test-WSL){
         try {
             Write-Host "Disabling WSL..." -ForegroundColor White -BackgroundColor Black
              ECHO N | powershell Disable-WindowsOptionalFeature -Online -FeatureName Microsoft-Windows-Subsystem-Linux
 
             if (Test-WSL2Support){
-    		Write-Host "Disabling Virtual Machine Platform..." -ForegroundColor White -BackgroundColor Black                
+    		Write-Host "Disabling Virtual Machine Platform..." -ForegroundColor White -BackgroundColor Black
 		 ECHO N | powershell Disable-WindowsOptionalFeature -Online -FeatureName VirtualMachinePlatform
-               
-                $installFolder = "C:\ProgramData\Sindagal\" 
-                $installFile = "C:\ProgramData\Sindagal\wsl_update_x64.msi" 
-            
+
+                $installFolder = "C:\ProgramData\Sindagal\"
+                $installFile = "C:\ProgramData\Sindagal\wsl_update_x64.msi"
+
                 # silent uninstall
-		Write-Host "Downgrading from WSL2 Kernel Patch..." -ForegroundColor White -BackgroundColor Black                
+		Write-Host "Downgrading from WSL2 Kernel Patch..." -ForegroundColor White -BackgroundColor Black
                 $installerParams = @("/qn", "/x", $installFile)
                 Start-Process "msiexec.exe" -ArgumentList $installerParams -Wait -NoNewWindow
             }
@@ -449,7 +462,7 @@ function Disable-WSL {
 function New-Distro {
     if(!(Test-Elevation)){
     	throw "This requires admin privileges, please run it through an elevated powershell prompt"
-    }   
+    }
     Invoke-WebRequest -Uri https://aka.ms/wsl-debian-gnulinux -OutFile .\Debian.appx -UseBasicParsing
     Add-AppxPackage .\Debian.appx
 }
@@ -457,7 +470,7 @@ function New-Distro {
 function Remove-Distro {
     if(!(Test-Elevation)){
     	throw "This requires admin privileges, please run it through an elevated powershell prompt"
-    }   
+    }
     wsl.exe --unregister Debian
     Remove-AppxPackage .\Debian.appx
 }
@@ -474,15 +487,15 @@ function Register-DistroAddons {
 # Published: Tuesday, June 29, 2021
 # Source: https://mickitblog.blogspot.com/2021/06/powershell-install-fonts.html
 function Install-Font {
-    param  
-    (  
-         [Parameter(Mandatory = $true)][ValidateNotNullOrEmpty()][System.IO.FileInfo]$FontFile  
-    ) 
-    
+    param
+    (
+         [Parameter(Mandatory = $true)][ValidateNotNullOrEmpty()][System.IO.FileInfo]$FontFile
+    )
+
     if(!(Test-Elevation)){
     	throw "This requires admin privileges, please run it through an elevated powershell prompt"
-    }   
-    
+    }
+
     #Get Font Name from the File's Extended Attributes
     $oShell = new-object -com shell.application
     $Folder = $oShell.namespace($FontFile.DirectoryName)
@@ -507,14 +520,14 @@ function Install-Font {
         If ($null -ne (Get-ItemProperty -Name $FontName -Path "HKLM:\Software\Microsoft\Windows NT\CurrentVersion\Fonts" -ErrorAction SilentlyContinue)) {
              #Test if the entry matches the font file name
             If ((Get-ItemPropertyValue -Name $FontName -Path "HKLM:\Software\Microsoft\Windows NT\CurrentVersion\Fonts") -eq $FontFile.Name) {
-                Write-Host 'Adding' +  $FontName + 'to the registry.....' -NoNewline  -ForegroundColor White 
+                Write-Host 'Adding' +  $FontName + 'to the registry.....' -NoNewline  -ForegroundColor White
                 Write-Host 'Success' -ForegroundColor Yellow
             } else {
                 $AddKey = $true
                 Remove-ItemProperty -Name $FontName -Path "HKLM:\Software\Microsoft\Windows NT\CurrentVersion\Fonts" -Force
                 Write-Host 'Adding' + $FontName + 'to the registry.....' -NoNewline  -ForegroundColor White
                 New-ItemProperty -Name $FontName -Path "HKLM:\Software\Microsoft\Windows NT\CurrentVersion\Fonts" -PropertyType string -Value $FontFile.Name -Force -ErrorAction SilentlyContinue | Out-Null
-                
+
                 If ((Get-ItemPropertyValue -Name $FontName -Path "HKLM:\Software\Microsoft\Windows NT\CurrentVersion\Fonts") -eq $FontFile.Name) {
                     Write-Host 'Success' -ForegroundColor Yellow
                  } else {
@@ -543,19 +556,19 @@ function Install-Font {
             $AddKey = $false
         }
         write-warning $_.exception.message
-    } 
+    }
 }
 
 function Remove-Font {
-    param  
-    (  
-         [Parameter(Mandatory = $true)][ValidateNotNullOrEmpty()][System.IO.FileInfo]$FontFile  
-    ) 
+    param
+    (
+         [Parameter(Mandatory = $true)][ValidateNotNullOrEmpty()][System.IO.FileInfo]$FontFile
+    )
 
     if(!(Test-Elevation)){
     	throw "This requires admin privileges, please run it through an elevated powershell prompt"
-    }   
-    
+    }
+
      #Get Font Name from the File's Extended Attributes
      $oShell = new-object -com shell.application
      $Folder = $oShell.namespace($FontFile.DirectoryName)
@@ -569,19 +582,19 @@ function Remove-Font {
  	$fontRegistryKeyExists = $null -ne (Get-ItemProperty -Name $FontName -Path "HKLM:\Software\Microsoft\Windows NT\CurrentVersion\Fonts" -ErrorAction SilentlyContinue)
          If ($fontRegistryKeyExists) {
             Write-Host ('Removing key for ' + $FontName + ' from the registry.....') -NoNewline  -ForegroundColor White
-            Remove-ItemProperty -Name $FontName -Path "HKLM:\Software\Microsoft\Windows NT\CurrentVersion\Fonts" -Force           
-         } 
+            Remove-ItemProperty -Name $FontName -Path "HKLM:\Software\Microsoft\Windows NT\CurrentVersion\Fonts" -Force
+         }
 
         Write-Host ('Deleting' + $FontFile.Name + '.....') -NoNewline
         Remove-Item ("C:\Windows\Fonts\" + $FontFile.Name) -Force
-         
+
         $fontIsDeleted = (Test-Path ("C:\Windows\Fonts\" + $FontFile.Name)) -eq $false
         If ($fontIsDeleted) { Write-Host ('Success') -Foreground Yellow }
         else {  Write-Host ('Failed') -ForegroundColor Red }
-        
+
      } catch {
         Write-Host ('Failed') -ForegroundColor Red
         write-warning $_.exception.message
      }
-} 
+}
 #endregion Internal Functions

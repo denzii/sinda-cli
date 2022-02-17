@@ -8,10 +8,9 @@
 		"node": ">=10"
 	},
 	"scripts": {
-		"build": "tsc --project tsconfig.json && chmod +x dist/index.js",
-		"start": "npm run build && dist/index.js",
-		"pretest": "npm run build",
-		"test": "xo && ava"
+		"build": "tsc --project tsconfig.json",
+		"start": "npm run build && node dist/index.js",
+		"pretest": "npm run build"
 	},
 	"files": [
 		"dist/cli.js"
@@ -80,6 +79,6 @@
 		"eslint-plugin-react-hooks": "^4.3.0",
 		"ink-testing-library": "^2.1.0",
 		"typescript": "^4.5.5",
-		"xo": "^0.39.1"
+		"xo": "^0.48.0"
 	}
 }
