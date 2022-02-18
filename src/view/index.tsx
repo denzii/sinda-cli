@@ -34,7 +34,7 @@ const Index = () => {
             ctx!.router((RouteContext.Survey));
         } else exit()
 	});
-    
+
     useEffect(() => {
         /**@todo execute task earlier and just receive answer from worker */
         if (process.HostPlatforms.includes(HostPlatform.Windows)){
@@ -56,27 +56,27 @@ const Index = () => {
     const P = Sinda.P;
     const Br = Sinda.Br;
     return <>
-        <Div style={{flexDirection:"column", width:"30%"}}>
+        <Div style={{flexDirection:"column", width:"35%"}}>
             <Div style={{height:"10px"}}><></></Div>
-            
-            <Div style={merge([{display:"flex", justifyContent:"flex-start"}])}>
+
+            <Div style={merge([{display:"flex", justifyContent:"center"}])}>
                 <P>Welcome To</P>
             </Div>
 
-            <Div style={merge([{display:"flex",  justifyContent:"flex-start",}])}>
+            <Div style={merge([{display:"flex",  justifyContent:"center",}])}>
                 <P>{banner}</P>
             </Div>
 
-            <Div style={merge([{ height:"12px", justifyContent:"flex-start"}])}>
+            <Div style={merge([{ height:"12px", justifyContent:"center"}])}>
                     <P>
-                        Your  
+                        Your
                         <Gradient name="cristal"> <P> fullstack </P> </Gradient>
                         framework!
                     </P>
             </Div>
 
-            <Div style={merge([{ height:"14px", justifyContent:"flex-start", marginTop: "2px"}, {}])}>
-            {(!(undefined == isElevated) && !isElevated) 
+            <Div style={merge([{ height:"14px", justifyContent:"center", marginTop: "2px"}, {}])}>
+            {(!(undefined == isElevated) && !isElevated)
                 ? <>
                     <Div style={{flexDirection:"column", width:"90%", justifyContent:"center"}}>
                         <Gradient name='fruit'>
@@ -90,9 +90,9 @@ const Index = () => {
                 </>
                 :<>
                     <Div style={{flexDirection:"column", justifyContent:"center", display: ctaVisibility ? "flex" : "none"}}>
-                        {isElevated 
+                        {isElevated
                             ? <P>Press any key to start...</P>
-                            : <P style={{dimColor:true}}>...Fetching terminal session admin status...</P>}           
+                            : <P style={{dimColor:true}}>...Fetching terminal session admin status...</P>}
                     </Div>
                 </>}
 			</Div>

@@ -422,14 +422,6 @@ function Enable-WSLLegacy {
     }
 }
 
-function Enable-Docker{
-	if (!(Test-Chocolatey)){
-		Enable-Chocolatey
-	}
-
-	choco install -y docker-desktop --force
-}
-
 function Add-SindaDistro{
 	$distroState = Get-DistroState
 
@@ -441,7 +433,6 @@ function Add-SindaDistro{
 		Write-Error "Pending restart after enabling WSL, cannot import a new distro"
 		return
 	}
-
 	if([bool]$distroState["installedDistros"].Contains("SindaUbuntu")){
 		Write-Host "distro already exists, no action taken"
 		return

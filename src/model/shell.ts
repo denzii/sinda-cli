@@ -7,7 +7,7 @@ export type ShellBuffer = string | Buffer | undefined;
 
 export default class Shell {
 
-    static RunSync: (commands: Executable[]) => ShellResponse[] = (commands: Executable[]) => {
+	static RunSync: (commands: Executable[]) => ShellResponse[] = (commands: Executable[]) => {
         return commands.map(elem => {
             // if the shell is powershell, combine the arguments using semicolon
             // if the shell is bash, combine them using empty string
@@ -15,7 +15,6 @@ export default class Shell {
             // combine command with its arguments into a single string.
             // an example is: "ls -a" where "ls" is the exe and "-a" is the argument.
             const exe: string = `${elem.executable} ${exeArguments}`
-
             const exeOptions =  { shell: elem.target, stdio: "pipe" };
 
             // apply side-effect on the host machine using the target shell

@@ -50,12 +50,12 @@ export enum Question {
 
 export interface SurveyConfig {
 	pageToggle: Question,
-	checkboxGlyph: Element,	
+	checkboxGlyph: Element,
 	button: Element,
 	questions: Element[],
 	footer: Element,
 	questionGroupIds: {
-		name: Question, 
+		name: Question,
 		context: {
 			heading: Element;
 			annotation: Element;
@@ -74,11 +74,11 @@ export interface SurveyConfig {
 export const SurveyContext = React.createContext<{
 	 pageModifier: React.Dispatch<React.SetStateAction<Question>>;
 	 pageItemModifier: (pageHeading: string, headingGradient: GradientTheme, pagePrompt: string, promptGradient: GradientTheme) => void;
-	 arrowKeyUp: () => void; 
-	 arrowKeyDown: () => void; 
-	 finalizeSet: (results: number[]) => void; 
+	 arrowKeyUp: () => void;
+	 arrowKeyDown: () => void;
+	 finalizeSet: (results: number[]) => void;
 	} | undefined>(undefined);
-	 
+
 const Survey = () => {
 	let mountedRef = useRef(true)
 	const ctx = useContext(RouterContext);
@@ -86,12 +86,12 @@ const Survey = () => {
 
 	const Div = Sinda.Div;
 	const P = Sinda.P;
-	
+
 	const firstVisibleElementGroupId = config.questionGroupIds.find(id => id.name == config.questions[0].context?.name!);
 
 	const firstVisibleCheckboxPageHeading = firstVisibleElementGroupId?.context?.heading?.text!;
 	const firstVisibleCheckboxHeadingGradient = firstVisibleElementGroupId?.context.heading.colourization!;
-	
+
 	const [pageHeading, setPageHeading]= useState<{text: string, gradient: GradientTheme}>({text: firstVisibleCheckboxPageHeading, gradient:firstVisibleCheckboxHeadingGradient});
 	const [pagePrompt, setPagePrompt] = useState<{text: string, gradient: GradientTheme}>();
 	const [isUpArrowPressed, setUpArrowState] = useState<boolean>(false);
@@ -102,7 +102,7 @@ const Survey = () => {
 	const {disableFocus, enableFocus, focusNext, focusPrevious} = useFocusManager();
 	const [confirmationOpen, setConfirmationOpen] = useState(false);
 	const inkFocus = useFocus({id:"0"});
- 
+
 	useEffect(()=>{
 		inkFocus.focus("0");
 		return () => {mountedRef.current = false; disableFocus();}
@@ -140,7 +140,7 @@ const Survey = () => {
 					else{
 						finalizeSurvey(checkedBoxIds);
 					};
-				} 
+				}
 			}
 			if(pressedKey.escape){
 				if (confirmationOpen){
@@ -151,15 +151,15 @@ const Survey = () => {
 			}
 			if(pressedKey.return){
 				// if element is focused and enter key is hit, remove it from active elems array else add it in
-				isElementChecked 
-				? setCheckedBoxIds(ids => ids.filter(id => index != id)) 
+				isElementChecked
+				? setCheckedBoxIds(ids => ids.filter(id => index != id))
 				: setCheckedBoxIds(ids => [...ids, index]);
 			}
-			
+
 			if(pressedKey.downArrow && !confirmationOpen){
 				if (config.questions[index+1] != undefined && config.questions[index+1].context?.name != element.context?.name){
 					setActivePage(config.questions[index+1].context?.name!);
-					const nextPageContext = config.questionGroupIds.find(id => id.name == config.questions[index+1].context?.name!); 
+					const nextPageContext = config.questionGroupIds.find(id => id.name == config.questions[index+1].context?.name!);
 					if (nextPageContext){
 						if (nextPageContext.context.heading && nextPageContext.context.heading.text){
 							handlePageItems(String(nextPageContext.context.heading.text), nextPageContext.context.heading.colourization as GradientTheme, String(nextPageContext.context.annotation?.text!), nextPageContext.context.annotation?.colourization as GradientTheme);
@@ -168,7 +168,7 @@ const Survey = () => {
 				} else if(index+1 === config.questions.length){
 					setActivePage(config.questions[0].context?.name!);
 					focus(String(0));
-					const nextPageContext = config.questionGroupIds.find(id => id.name == config.questions[0].context?.name!); 
+					const nextPageContext = config.questionGroupIds.find(id => id.name == config.questions[0].context?.name!);
 					if (nextPageContext){
 						if (nextPageContext.context.heading && nextPageContext.context.heading.text){
 							handlePageItems(String(nextPageContext.context.heading.text), nextPageContext.context.heading.colourization as GradientTheme, String(nextPageContext.context.annotation?.text!), nextPageContext.context.annotation?.colourization as GradientTheme);
@@ -181,7 +181,7 @@ const Survey = () => {
 			if(pressedKey.upArrow && !confirmationOpen){
 				if (config.questions[index-1] != undefined && config.questions[index-1].context?.name != element.context?.name){
 					setActivePage(config.questions[index-1].context?.name!);
-					const nextPageContext = config.questionGroupIds.find(id => id.name == config.questions[index-1].context?.name!); 
+					const nextPageContext = config.questionGroupIds.find(id => id.name == config.questions[index-1].context?.name!);
 					if (nextPageContext){
 						if (nextPageContext.context.heading && nextPageContext.context.heading.text){
 							handlePageItems(String(nextPageContext.context.heading.text), nextPageContext.context.heading.colourization as GradientTheme, String(nextPageContext.context.annotation?.text!), nextPageContext.context.annotation?.colourization as GradientTheme);
@@ -189,7 +189,7 @@ const Survey = () => {
 					}
 				} else if(index-1 == -1){
 					setActivePage(config.questions[config.questions.length-1].context?.name!);
-					const nextPageContext = config.questionGroupIds.find(id => id.name ==config.questions[config.questions.length-1].context?.name!); 
+					const nextPageContext = config.questionGroupIds.find(id => id.name ==config.questions[config.questions.length-1].context?.name!);
 					if (nextPageContext){
 						if (nextPageContext.context.heading && nextPageContext.context.heading.text){
 							handlePageItems(String(nextPageContext.context.heading.text), nextPageContext.context.heading.colourization as GradientTheme, String(nextPageContext.context.annotation?.text!), nextPageContext.context.annotation?.colourization as GradientTheme);
@@ -202,23 +202,23 @@ const Survey = () => {
 		}
 	}
 
-	
+
 	const checkboxes : (false | JSX.Element)[]= config.questions.map((element: Element, index) => {
 
 		const inkFocus = useFocus({id: String(index)});
 		const isChecked = checkedBoxIds.includes(index);
-		useInput((input, key) => handleInput(inkFocus.isFocused, inkFocus.focus, isChecked, element, index, key));	
-		
+		useInput((input, key) => handleInput(inkFocus.isFocused, inkFocus.focus, isChecked, element, index, key));
+
 		const groupContext = config.questionGroupIds.find(id => id.name == element.context?.name);
-		const ButtonOrCheckbox: JSX.Element = element.context?.isButton 
+		const ButtonOrCheckbox: JSX.Element = element.context?.isButton
 			? <Button  key={index} element={element} isConfirmationOpen={confirmationOpen} isFocused={inkFocus.isFocused}></Button>
-			: <Checkbox  key={index} element={element} glyph={config.checkboxGlyph} isElementChecked={isChecked} isFocused={inkFocus.isFocused}></Checkbox>		
+			: <Checkbox  key={index} element={element} glyph={config.checkboxGlyph} isElementChecked={isChecked} isFocused={inkFocus.isFocused}></Checkbox>
 
 		//render only if element name matches active page
 		const shouldBeRendered: boolean = (groupContext?.name === activePage || groupContext?.name == Question.None);
 		return shouldBeRendered && ButtonOrCheckbox
 	})
-	
+
 	return <>
 		<Div style={{flexDirection:"column", width:"95%", justifyContent:"space-between", minWidth:"10%"}}>
 			<Div style={{flexDirection:"row", justifyContent:"flex-start"}}>
@@ -227,7 +227,7 @@ const Survey = () => {
 						{config.logo.text}
 					</VisualElement>
 				</Div>
-				<Div style={{flexDirection:"column", marginLeft:-2, marginTop:0, height:8}}>
+				<Div style={{flexDirection:"column", marginLeft:-2, marginTop:1, height:8}}>
 					{config.questionGroupIds.map((page) =>{
 						const shouldBeRendered: boolean = page.name !== Question.None && undefined != config.questions.find( q => q.context?.name == page.name);
 						return shouldBeRendered && <VisualElement key={page.name} gradient={String(page.name == activePage ? "summer" : config.logo.options.colourization) as GradientTheme}>
@@ -238,7 +238,7 @@ const Survey = () => {
 			</Div>
 			<Div style={{height:"100%",  flexDirection:"row", justifyContent:"center"}}>
 				<Div style={{height:"100%", flexDirection:"column", justifyContent:"flex-start", marginTop:0}}>
-					<Div style={{flexDirection:"row", justifyContent:"center", height:3}}> 
+					<Div style={{flexDirection:"row", justifyContent:"center", height:3}}>
 						{pageHeading && <VisualElement gradient={pageHeading.gradient}>
 								{pageHeading.text}
 						</VisualElement>}
@@ -258,7 +258,7 @@ const Survey = () => {
 					{config.footer.text}
 				</VisualElement>
 			</Div>
-		</Div>	
+		</Div>
 	</>;
 }
 

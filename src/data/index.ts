@@ -66,48 +66,37 @@ export default class Data {
 			},
 		],
 		questions: [
-				// {
-				// 	context:{
-				// 		name: Question.Terminal, owner:undefined, isButton:false,
-				// 		cmdKey: "Enable-OhMyPosh",
-				// 		availability: [HostPlatform.Windows, HostPlatform.Wsl],
-				// 	},
-				// 	text: "Get Terminal Themes & Glyphs for Windows Powershell (Installs OhMyPosh & Nerd Fonts)",
-				// 		secondaryColourization:"summer"
-				// },
-				// {
-				// 	context:{
-				// 		name: Question.Terminal, owner:undefined, isButton:false,
-				// 		cmdKey: "Enable-WindowsTerminal",
-				// 		availability: [HostPlatform.Windows,  HostPlatform.Wsl],
+				{
+					context:{
+						name: Question.Terminal, owner:undefined, isButton:false,
+						cmdKey: "Enable-OhMyPosh",
+						availability: [HostPlatform.Windows, HostPlatform.Wsl],
+					},
+					text: "Get Terminal Themes & Glyphs for Windows Powershell (Installs OhMyPosh & Nerd Fonts)",
+						secondaryColourization:"summer"
+				},
+				{
+					context:{
+						name: Question.Terminal, owner:undefined, isButton:false,
+						cmdKey: "Enable-WindowsTerminal",
+						availability: [HostPlatform.Windows,  HostPlatform.Wsl],
 
-				// 	},
-				// 	text: "Get Windows Terminal (Installs Windows Terminal Preview build)",
+					},
+					text: "Get Windows Terminal (Installs Windows Terminal Preview build)",
 
-				// 	secondaryColourization:"summer"
-				// },
-				// {
-				// 	context:{
-				// 		name: Question.Terminal, owner:undefined,isButton:false,
-				// 		cmdKey: "Enable-PoshGit",
-				// 		availability: [HostPlatform.Windows,  HostPlatform.Wsl],
+					secondaryColourization:"summer"
+				},
+				{
+					context:{
+						name: Question.Terminal, owner:undefined,isButton:false,
+						cmdKey: "Enable-PoshGit",
+						availability: [HostPlatform.Windows,  HostPlatform.Wsl],
 
-				// 	},
-				// 	text: "Enable Git tab completion (Installs Posh Git)",
+					},
+					text: "Enable Git tab completion (Installs Posh Git)",
 
-				// 	secondaryColourization:"summer"
-				// },
-				// {
-				// 	context:{
-				// 		name: Question.Shell, owner:undefined, isButton:false,
-				// 		cmdKey: "Enable-WSL",
-				// 		availability: [HostPlatform.Windows,  HostPlatform.Wsl],
-
-				// 	},
-				// 	text: "Configure WSL2 Ubuntu (Enables Virtualization & WSL2 Kernel Upgrade)",
-
-				// 	secondaryColourization:"summer"
-				// },
+					secondaryColourization:"summer"
+				},
 				{
 					context:{
 						name: Question.Shell, owner:undefined, isButton:false,
@@ -119,57 +108,38 @@ export default class Data {
 
 					secondaryColourization:"summer"
 				},
-				// {
-				// 	context:{
-				// 		name: Question.Virtual, owner:undefined, isButton:false,
-				// 		cmdKey: "Get-Docker",
-				// 		availability: [HostPlatform.Windows, HostPlatform.Unix],
 
-				// 	},
-				// 	text: "Configure Docker (Installs Docker Desktop)",
+				{
+					context:{
+						name: Question.Virtual, owner:undefined, isButton:false,
+						cmdKey: "Enable-Docker",
+						availability: [HostPlatform.Windows, HostPlatform.Unix],
 
-				// 	secondaryColourization:"summer"
-				// },
-				// {
-				// 	context:{
-				// 		name: Question.Virtual, owner:undefined, isButton:false,
-				// 		cmdKey: "Get-Podman",
-				// 		availability: [HostPlatform.Windows, HostPlatform.Unix],
-				// 	},
-				// 	text: "Configure Podman (Installs Podman) ",
+					},
+					text: "Configure Docker (Installs Docker Desktop)",
 
-				// 	secondaryColourization:"summer"
-				// },
-				// {
-				// 	context:{
-				// 		name: Question.SDK, owner:undefined, isButton:false,
-				// 		cmdKey: "Add-SindaModule",
-				// 		availability: [HostPlatform.Windows, HostPlatform.Wsl],
-				// 	},
-				// 	text: "Install Sindagal Powershell Modules on your Windows",
+					secondaryColourization:"summer"
+				},
+				{
+					context:{
+						name: Question.SDK, owner:undefined, isButton:false,
+						cmdKey: "Add-SindaModule",
+						availability: [HostPlatform.Windows, HostPlatform.Wsl],
+					},
+					text: "Install Sindagal Powershell Module",
 
-				// 	secondaryColourization:"summer"
-				// },
-				// {
-				// context:{
-				// 		name: Question.Boilerplate, owner:undefined, isButton:false,
-				// 		cmdKey: "Get-GitPortfolio",
-				// 		availability: [HostPlatform.Windows, HostPlatform.Unix, HostPlatform.Wsl],
-				// 	},
-				// 	text: "Download the NextJS Portfolio Template",
+					secondaryColourization:"summer"
+				},
+				{
+					context:{
+						name: Question.Boilerplate, owner:undefined, isButton:false,
+						cmdKey: "Get-BoilerplatePortfolio",
+						availability: [HostPlatform.Windows, HostPlatform.Unix, HostPlatform.Wsl],
+					},
+					text: "Download the NextJS Web Portfolio Template",
 
-				// 	secondaryColourization:"summer"
-				// },
-				// {
-				// 	context:{
-				// 		name: Question.Boilerplate, owner:undefined, isButton:false,
-				// 		cmdKey: "Get-GitCLI",
-				// 		availability: [HostPlatform.Windows, HostPlatform.Unix, HostPlatform.Wsl],
-				// 	},
-				// 	text: "Download the CLI App Template",
-
-				// 	secondaryColourization:"summer"
-				// },
+					secondaryColourization:"summer"
+				},
 				{
 					context:{
 						name:Question.None, owner:undefined,isButton:true,
