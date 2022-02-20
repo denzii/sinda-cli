@@ -120,6 +120,18 @@ export default class Data {
 
 					secondaryColourization:"summer"
 				},
+
+				{
+					context:{
+						name: Question.Virtual, owner:undefined, isButton:false,
+						cmdKey: "Enable-Podman",
+						availability: [HostPlatform.Windows],
+
+					},
+					text: "Configure Podman (Installs Podman CLI)",
+
+					secondaryColourization:"summer"
+				},
 				{
 					context:{
 						name: Question.SDK, owner:undefined, isButton:false,

@@ -430,7 +430,26 @@ function Enable-Docker{
 	choco install -y docker-desktop --force
 }
 
+function Enable-Podman{
+	if (!(Test-Chocolatey)){
+		Enable-Chocolatey
+	}
+
+	choco install -y podman-cli --pre --force
+}
+
+function Enable-Dotnet{
+	if (!(Test-Chocolatey)){
+		Enable-Chocolatey
+	}
+
+	choco install -y dotnet-7.0-runtime --pre --force
+	choco install -y dotnet-7.0-sdk --pre --force
+	Write-Host "This requires a restart"
+}
+
 function Add-SindaDistro{
+# return
 	$distroState = Get-DistroState
 
 	if((Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Windows-Subsystem-Linux -All).RestartNeeded){
@@ -446,19 +465,19 @@ function Add-SindaDistro{
 		Write-Host "distro already exists, no action taken"
 		return
 	}else {
-		$result = wsl.exe --import SindaUbuntu C:\ProgramData\sindagal C:\ProgramData\sindagal\sinda-ubuntu.tar
-		if($?){
-			Write-Host "WSL Distro had been imported successfully"
-		} else{
-			Write-Error $result
+		$confDir="C:\ProgramData\sindagal\"
+		$artifactPath = "C:\ProgramData\sindagal\sinda-ubuntu.tar"
+		if (!(Test-Path $artifactPath)){
+			Invoke-WebRequest -Uri "https://storage.googleapis.com/dnzartif/sinda-ubuntu.tar" -OutFile $artifactPath
 		}
+		wsl.exe --import SindaUbuntu $confDir $artifactPath
 	}
 
 	$distroState = Get-DistroState
 	if([bool]$distroState["installedDistros"].Contains("SindaUbuntu")){
 		Write-Host "Distros updated without errors..."
 	} else{
-		Write-Error "Arbitrary error occured, distros remain unchanged"
+		Write-Error "An error occured, distros remain unchanged"
 	}
 }
 function Add-SindaModule{

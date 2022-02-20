@@ -25,7 +25,7 @@ import ShellResponse from '../model/shellResponse.js';
 import Executable, { ShellType } from '../model/executable.js';
 import Env, { HostPlatform } from '../model/env.js';
 
-const Index = () => {
+const Index = (props: {writeStd: (value: React.SetStateAction<string[]>) => void}) => {
 	const [ctaVisibility, toggleCtaVisibility] = useState(true);
 	const ctx = useContext(RouterContext);
     const [isElevated, setIsElevated] = useState<boolean|undefined>(undefined);
@@ -36,9 +36,14 @@ const Index = () => {
 	});
 
     useEffect(() => {
+		patchConsole((stream:string, data:string) => {
+			props.writeStd((stds: string[]) => [...stds, data]);
+		});
         /**@todo execute task earlier and just receive answer from worker */
         if (process.HostPlatforms.includes(HostPlatform.Windows)){
+
             const response: ShellResponse = Shell.RunSync([new Executable(ShellType.Powershell, ".", [Env.PSFuncPath(), "Test-Elevation"])])[0];
+			
             if (["True", "False"].includes(response.std.stdout!)){
                 const isElevated: boolean = response.std.stdout?.toLowerCase().trim() == "true";
                 setIsElevated(isElevated);
@@ -55,6 +60,7 @@ const Index = () => {
     const Div = Sinda.Div;
     const P = Sinda.P;
     const Br = Sinda.Br;
+
     return <>
         <Div style={{flexDirection:"column", width:"35%"}}>
             <Div style={{height:"10px"}}><></></Div>

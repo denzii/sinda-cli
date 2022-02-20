@@ -45,6 +45,20 @@ const Details = (props:{results:Element[], worker: Worker, writeStd: React.Dispa
 		return () => {};
     },[]);
 
+	// useEffect(()=>{
+	// 	const runCommand = async() => {
+	// 		const asyncRes = await Promise.all(tasksState!.map(async (task) => {
+	// 			const formattedArgs = task.arguments?.map((arg) => `-${capitalize(arg.key)} ${arg.value}`);
+	// 			const exeArgs = formattedArgs ? [Env.PSFuncPath(), task.taskKey, formattedArgs.join(" ")] : [Env.PSFuncPath(), task.taskKey];
+
+	// 			// return new Executable(ShellType.Powershell, task.taskKey,[]);
+	// 			// await Shell.RunAsync([new Executable(ShellType.Powershell, ".", exeArgs)]);
+	// 			return task;
+	// 		}));
+	// 		tasksState
+	// 	}
+	// },[isConfirmed]);
+
     const onConfirm = () => {
         setConfirmationOpen(false);
         setIsConfirmed(true);
@@ -62,11 +76,13 @@ const Details = (props:{results:Element[], worker: Worker, writeStd: React.Dispa
 
         const newState = exes.map(exe => ({taskKey:exe.arguments[1], taskStatus: TaskStatus.Running}));
         setTasksState(ts => newState);
-            
-        // const result = Shell.RunSync([exes[0]])[0];
-        // run commands, paste outputs above the cli box
-        // update the state so the ui can be updated
+
+
         const tasks = exes.map(exe =>{
+			// TODO: Show Progress bar instead of the Running status, not included in MVP
+			//	Push realtime results from std inside the box state
+			// TODO: Concurrent execution with "DependsOn" flags
+			// TODO: Move to async useEffect function
             const result = Shell.RunSync([exe])[0];
             const hasError = undefined != result.std.stderr;
 
@@ -79,11 +95,11 @@ const Details = (props:{results:Element[], worker: Worker, writeStd: React.Dispa
             props.writeStd((stds: string[]) => [...stds,err]);
 
             const status = hasError ? TaskStatus.Failed : TaskStatus.Complete;
-            
+
             return {taskKey: exe.arguments[1], taskStatus: status, taskStd:result.std, timestamp:result.executedAt}
-        });        
+        });
         setTasksState(ts => tasks);
-    }  
+    }
 
     useInput((input, key) =>{
         if(key.return){
@@ -99,10 +115,10 @@ const Details = (props:{results:Element[], worker: Worker, writeStd: React.Dispa
             }
         }
     });
-    
+
     const Div = Sinda.Div;
     const P = Sinda.P;
-    
+
     const ConfirmButton = () => <Div key={props.results.length} style={{alignSelf:"center", display:isConfirmed ? "none" : "flex" }}>
                                     <Button element={config.button} isConfirmationOpen={confirmationOpen} isFocused={true}></Button>
                                 </Div>
@@ -118,12 +134,12 @@ const Details = (props:{results:Element[], worker: Worker, writeStd: React.Dispa
                         <VisualElement gradient="summer">
                             Consent
                         </VisualElement>
-                        
+
                     </Div>
                 </Div>
                 <Div style={{height:"100%",  flexDirection:"row", justifyContent:"center"}}>
                     <Div style={{height:"100%", flexDirection:"column", justifyContent:"flex-start", marginTop:0}}>
-                        <Div style={{flexDirection:"row", justifyContent:"center", height:3}}> 
+                        <Div style={{flexDirection:"row", justifyContent:"center", height:3}}>
                             <VisualElement gradient={pageHeading.gradient}>
                                 {pageHeading.text}
                             </VisualElement>
@@ -142,7 +158,7 @@ const Details = (props:{results:Element[], worker: Worker, writeStd: React.Dispa
                                             </>}
                                             <P>{elem.taskKey} {execReport} </P>
                                             {isConfirmed && <P>{elem?.taskStd?.stderr?.split("\n")[0].split(".")[0]}</P>}
-                                        </Div> 
+                                        </Div>
                         })}
                         <ConfirmButton/>
                     </Div>
@@ -155,7 +171,7 @@ const Details = (props:{results:Element[], worker: Worker, writeStd: React.Dispa
                         {config.footer.text}
                     </VisualElement>
                 </Div>
-            </Div>	
+            </Div>
 }
 
 export default Details;

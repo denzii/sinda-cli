@@ -26,13 +26,13 @@ import { exit } from 'process';
 import Gradient from 'ink-gradient';
 import Details from './details.js';
 
-export enum IPCMessage {Boot, Stdout, Execution} 
+export enum IPCMessage {Boot, Stdout, Execution}
 export const RouterContext = React.createContext<{
 	router: React.Dispatch<React.SetStateAction<RouteContext>>;
 	setSurveyResults:(results: Element[]) => void;
    } | undefined>(undefined);
-	
-const App: (props: { context: CLI}) => JSX.Element = (props) => { 
+
+const App: (props: { context: CLI}) => JSX.Element = (props) => {
 	const [activePage, setRoute] = useState(RouteContext.Index);
 	const [stds, writeStd] = useState<string[]>([]);
 	const [isOnline, toggleWorkerStatus] = useState<WorkerStatus>(WorkerStatus.Offline);
@@ -40,7 +40,7 @@ const App: (props: { context: CLI}) => JSX.Element = (props) => {
 		patchConsole((stream:string, data:string) => {
 			writeStd((stds: string[]) => [...stds, data]);
 		});
-		
+
 		props.context.worker!.on('message', (message: {type: IPCMessage, payload: string}) => {
 			switch (message.type) {
 				case IPCMessage.Boot:
@@ -53,28 +53,28 @@ const App: (props: { context: CLI}) => JSX.Element = (props) => {
 		});
 		return () => {props.context.worker!.off('message', () => {})};
 	},[]);
-			
+
 	const GlobalContextProvider: React.Provider<RenderContext> = process.ReactContext.Provider;
 	const [surveyResults, setSurveyResults] = useState<Element[]>([]);
 	const handleSurveyResults = (results: Element[]) => {
 		setSurveyResults(results);
 	}
-	
+
 	const Div = Sinda.Div;
 	const P = Sinda.P;
 
 	return <>
         <Static items={stds}>{std =><Div key={std} style={{flexDirection:"column", justifyContent:"flex-start"}}><P >{std.trim()}</P></Div>}</Static>
-		
+
 		<GlobalContextProvider value={props.context.context}>
 			<RouterContext.Provider value={{router:setRoute, setSurveyResults: handleSurveyResults}}>
-				{activePage === RouteContext.Index  &&<Index/>}
+				{activePage === RouteContext.Index  &&<Index writeStd={writeStd}/>}
 				{/* {activePage === RouteContext.Options && <Options/>} */}
 				{activePage === RouteContext.Survey  &&<Survey/>}
 				{activePage === RouteContext.Results  && surveyResults &&<Details worker={props.context.worker!} writeStd={writeStd} results={surveyResults}/>}
 			</RouterContext.Provider>
 		</GlobalContextProvider>
-		
+
 	</>
 }
 
