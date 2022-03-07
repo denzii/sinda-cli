@@ -108,20 +108,20 @@ function Enable-WindowsTerminal {
 	}
 
      #TODO: Move settings backup to a separate function so it can be executed after wsl setup
-     #$wtSettingsURL = "https://raw.githubusercontent.com/denzii/sindagal/master/settings.json"
+     $wtSettingsURL = "https://raw.githubusercontent.com/denzii/sindagal/master/settings.json"
 
-     #Write-Host "Replacing Windows Terminal settings with pre-configured settings downloaded from github" -ForegroundColor White -BackgroundColor Black
-     #Write-Host "${wtSettingsURL}"  -ForegroundColor White -BackgroundColor Black
+     Write-Host "Replacing Windows Terminal settings with pre-configured settings downloaded from github" -ForegroundColor White -BackgroundColor Black
+     Write-Host "${wtSettingsURL}"  -ForegroundColor White -BackgroundColor Black
 
-    #$windowsTerminalConfigPath = "$env:USERPROFILE\AppData\Local\Packages\Microsoft.WindowsTerminalPreview_8wekyb3d8bbwe\LocalState\settings.json"
-    #$windowsTerminalBackupConfigPath = "$env:USERPROFILE\AppData\Local\Packages\Microsoft.WindowsTerminalPreview_8wekyb3d8bbwe\LocalState\settings-backup.json"
+    $windowsTerminalConfigPath = "$env:USERPROFILE\AppData\Local\Packages\Microsoft.WindowsTerminalPreview_8wekyb3d8bbwe\LocalState\settings.json"
+    $windowsTerminalBackupConfigPath = "$env:USERPROFILE\AppData\Local\Packages\Microsoft.WindowsTerminalPreview_8wekyb3d8bbwe\LocalState\settings-backup.json"
 
-    #if (!(Test-Path -Path $windowsTerminalBackupConfigPath -PathType Leaf)){
-	#Write-Host "Backing up windows terminal settings" -ForegroundColor White -BackgroundColor Black
-        #Rename-Item -LiteralPath $windowsTerminalConfigPath -NewName "settings-backup.json"
-    #}
+    if (!(Test-Path -Path $windowsTerminalBackupConfigPath -PathType Leaf)){
+	Write-Host "Backing up windows terminal settings" -ForegroundColor White -BackgroundColor Black
+        Rename-Item -LiteralPath $windowsTerminalConfigPath -NewName "settings-backup.json"
+    }
 
-    #Invoke-WebRequest -uri  "https://raw.githubusercontent.com/denzii/sindagal/master/settings.json" -Method "GET" -Outfile $windowsTerminalConfigPath
+    Invoke-WebRequest -uri  "https://raw.githubusercontent.com/denzii/sindagal/master/settings.json" -Method "GET" -Outfile $windowsTerminalConfigPath
 }
 
 
