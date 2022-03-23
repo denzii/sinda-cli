@@ -19,11 +19,12 @@ install_zsh() {
     whereis zsh
 }
 
+# untested
 install_ohmyzsh() {
     sudo apt install git-core curl fonts-powerline
     sh -c "$(curl -fsSL https://raw.github.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
 }
-
+# tested
 install_azurecli(){
     # commands put together from
     # https://docs.microsoft.com/en-us/cli/azure/install-azure-cli-linux?pivots=apt
@@ -45,4 +46,14 @@ install_azurecli(){
     # Update repository information and install the azure-cli package
     sudo apt-get update
     sudo apt-get install azure-cli
+}
+
+#tested
+login_azurecli(){
+    echo "This approach doesn't work with Microsoft accounts or accounts that have two-factor authentication enabled."
+    read -p "Azure Username: " AZ_USER;
+    echo -n "Azure Password: " 
+    read -s AZ_PASS;
+    echo
+    echo "Attempting Azure Login..." && az login -u $AZ_USER -p $AZ_PASS;
 }
