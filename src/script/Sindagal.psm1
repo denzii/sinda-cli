@@ -25,6 +25,18 @@ function Get-EnvState {
     } | ConvertTo-Json
 }
 
+function Restore-WSL-Internet {
+    wsl --shutdown
+    netsh winsock reset
+    netsh int ip reset all
+    netsh winhttp reset proxy
+    ipconfig /flushdns
+
+    Write-Host "IPs, winsock, proxy & DNS had been reset! To complete the action:"
+    Write-Host "1) Hit the Windows Key, type Network Reset, hit enter. Reset the network using the button on that screen"
+    Write-Host "2) Restart Your Windows OS & Try a \"ping google.com\" once the OS boots up."
+}
+
 function Get-DistroState {
     if(Test-WSL) {
 		# Temporarily set console output encoding to unicode to read the wsl --list results properly
@@ -422,7 +434,34 @@ function Enable-WSLLegacy {
     }
 }
 
+function Enable-Docker{
+	if (!(Test-Chocolatey)){
+		Enable-Chocolatey
+	}
+
+	choco install -y docker-desktop --force
+}
+
+function Enable-Podman{
+	if (!(Test-Chocolatey)){
+		Enable-Chocolatey
+	}
+
+	choco install -y podman-cli --pre --force
+}
+
+function Enable-Dotnet{
+	if (!(Test-Chocolatey)){
+		Enable-Chocolatey
+	}
+
+	choco install -y dotnet-7.0-runtime --pre --force
+	choco install -y dotnet-7.0-sdk --pre --force
+	Write-Host "This requires a restart"
+}
+
 function Add-SindaDistro{
+# return
 	$distroState = Get-DistroState
 
 	if((Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Windows-Subsystem-Linux -All).RestartNeeded){
@@ -433,23 +472,24 @@ function Add-SindaDistro{
 		Write-Error "Pending restart after enabling WSL, cannot import a new distro"
 		return
 	}
+
 	if([bool]$distroState["installedDistros"].Contains("SindaUbuntu")){
 		Write-Host "distro already exists, no action taken"
 		return
 	}else {
-		$result = wsl.exe --import SindaUbuntu C:\ProgramData\sindagal C:\ProgramData\sindagal\sinda-ubuntu.tar
-		if($?){
-			Write-Host "WSL Distro had been imported successfully"
-		} else{
-			Write-Error $result
+		$confDir="C:\ProgramData\sindagal\"
+		$artifactPath = "C:\ProgramData\sindagal\sinda-ubuntu.tar"
+		if (!(Test-Path $artifactPath)){
+			Invoke-WebRequest -Uri "https://storage.googleapis.com/dnzartif/sinda-ubuntu.tar" -OutFile $artifactPath
 		}
+		wsl.exe --import SindaUbuntu $confDir $artifactPath
 	}
 
 	$distroState = Get-DistroState
 	if([bool]$distroState["installedDistros"].Contains("SindaUbuntu")){
 		Write-Host "Distros updated without errors..."
 	} else{
-		Write-Error "Arbitrary error occured, distros remain unchanged"
+		Write-Error "An error occured, distros remain unchanged"
 	}
 }
 function Add-SindaModule{

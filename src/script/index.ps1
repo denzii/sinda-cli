@@ -25,6 +25,18 @@ function Get-EnvState {
     } | ConvertTo-Json
 }
 
+function Restore-WSL-Internet {
+    wsl --shutdown
+    netsh winsock reset
+    netsh int ip reset all
+    netsh winhttp reset proxy
+    ipconfig /flushdns
+
+    Write-Host "IPs, winsock, proxy & DNS had been reset! To complete the action:"
+    Write-Host "1) Hit the Windows Key, type Network Reset, hit enter. Reset the network using the button on that screen"
+    Write-Host "2) Restart Your Windows OS & Try a \"ping google.com\" once the OS boots up."
+}
+
 function Get-DistroState {
     if(Test-WSL) {
 		# Temporarily set console output encoding to unicode to read the wsl --list results properly
