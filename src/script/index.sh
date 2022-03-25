@@ -24,6 +24,7 @@ install_ohmyzsh() {
     sudo apt install git-core curl fonts-powerline
     sh -c "$(curl -fsSL https://raw.github.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
 }
+
 # tested
 install_azurecli(){
     # commands put together from
@@ -46,6 +47,10 @@ install_azurecli(){
     # Update repository information and install the azure-cli package
     sudo apt-get update
     sudo apt-get install azure-cli
+
+    # install jmespath terminal for better querying with the --query parameter
+    sudo wget https://github.com/jmespath/jp/releases/latest/download/jp-linux-amd64 \
+    -O /usr/local/bin/jp  && sudo chmod +x /usr/local/bin/jp  
 }
 
 #tested
