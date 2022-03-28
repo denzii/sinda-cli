@@ -1,5 +1,5 @@
 
-# Sinda Command Line Interface
+# Sinda Command Line Interface (MVP)
 
 ![License](https://img.shields.io/badge/License-MIT-green)
 
