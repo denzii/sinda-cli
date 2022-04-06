@@ -62,3 +62,20 @@ login_azurecli(){
     echo
     echo "Attempting Azure Login..." && az login -u $AZ_USER -p $AZ_PASS;
 }
+
+install_minikube(){
+    curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
+    sudo install minikube-linux-amd64 /usr/local/bin/minikube
+}
+
+install_kubectl(){
+    curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+    curl -LO "https://dl.k8s.io/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl.sha256"
+
+    echo "$(cat kubectl.sha256)  kubectl" | sha256sum --check
+    if [ $? -eq 0 ] ; then
+        sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
+    else
+        echo "Kubectl sha256 exited with non zero, not going to proceed with install"    
+    fi
+}
