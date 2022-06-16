@@ -1,0 +1,6 @@
+{
+  typeof:"ps",
+  url:"https://pastebin.com/raw/AgdikePi",
+  oneof:"test"
+  compat: ["wsl2", "win10"]
+}
