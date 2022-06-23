@@ -87,6 +87,10 @@ _format() {
     done
 }
 
+# checks if packages exists on the machine or not
+# in: string[] package names of the required packages 
+# out: string[] package names which were not found on the machine
+# fails on: if the out array length is greater than zero
 ensure_nodejs_ver() {
     ENSURE_NODEJS_VER_OUT=()
     for VERSION in $@; do
@@ -113,6 +117,7 @@ ensure_nodejs_ver() {
     fi
 }
 
+# makes the nvm script visible to this bash process
 import_nvm(){
         export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
@@ -120,14 +125,17 @@ import_nvm(){
     return 0
 }
 
+# install nvm from official sources
 install_nvm(){
     echo "installing nvm..."
     curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.37.2/install.sh | bash
     source ~/.bashrc
     import_nvm
-		return 0
+    return 0
 }
 
+# fetches all engine fields from the package.json files inside the project root directory
+# installs them on the host machine
 walk_node_vers () {
     # get versions as array
     jq -r 'engines.node' 
@@ -139,10 +147,15 @@ walk_node_vers () {
 		return 0
 }
 
+# installs given node versions on the host machine
+# in: string[] package names of the required packages 
+# out: string[] package names which were not found on the machine
+# fails on: if the out array length is greater than zero
 nvm_install_node() {
     for VERSION in "$@"; do
         if ! nvm ls "$VERSION" >/dev/null 2>&1; then
             nvm install "$VERSION"
+	    
         fi
     done
 }
