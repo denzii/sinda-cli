@@ -27,17 +27,16 @@ install() {
                 fi
             fi
         done
-				# if test out lenght is greater than 0, then return 1
-				if [[ ${#INSTALLATION_FAILED_PACKAGES[@]} -gt 0 ]]; then
-						INSTALL_ERR=$INSTALLATION_FAILED_PACKAGES
-						return 1;
-				else
-						return 0;
-				fi
+	# if test out length is greater than 0, then return 1
+	if [[ ${#INSTALLATION_FAILED_PACKAGES[@]} -gt 0 ]]; then
+	INSTALL_ERR=$INSTALLATION_FAILED_PACKAGES
+		return 1;
+	else
+		return 0;
+	fi
     else
         return 1;
     fi
-   
 }
 
 # checks if packages exists on the machine or not
@@ -61,7 +60,7 @@ _test() {
     done
     # if test out lenght is greater than 0, then return 1
     if [[ ${#_TEST_OUT[@]} -gt 0 ]]; then
-				_TEST_ERR=$_TEST_OUT
+	_TEST_ERR=$_TEST_OUT
         return 1;
     else
         return 0;
@@ -106,8 +105,8 @@ ensure_nodejs_ver() {
     fi
 
     if [ ${#ENSURE_NODEJS_VER_OUT[@]} -ne 0 ]; then
-				ENSURE_NODEJS_VER_ERR=$ENSURE_NODEJS_VER_OUT
-				ENSURE_NODEJS_VER_OUT=""
+	ENSURE_NODEJS_VER_ERR=$ENSURE_NODEJS_VER_OUT
+	ENSURE_NODEJS_VER_OUT=""
         return 1
     else
         return 0;
